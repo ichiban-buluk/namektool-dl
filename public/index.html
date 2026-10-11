@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NAMEKTUKAM — Creator Dashboard</title>
+<meta name="description" content="Dashboard NAMEKTUKAM: project tracker, preset library, tools editor, YTTA tools, dan panel owner." />
+
+<!-- Fitur Keamanan Meta: Content Security Policy (CSP) & Referrer Policy -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://img.youtube.com https://*.ytimg.com; connect-src 'self' https://am.dapjisync.my.id https://generativelanguage.googleapis.com http://localhost:3000; frame-ancestors 'none';" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta http-equiv="X-Content-Type-Options" content="nosniff" />
+
+<!-- Frame Buster Script (Anti-Clickjacking) -->
+<script>
+  if (window.top !== window.self) {
+    window.top.location = window.self.location;
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --text:#f5f5f7; --text-dim:rgba(245,245,247,.65); --text-mute:rgba(245,245,247,.42);
+    --green:#4ade80; --cyan:#67e8f9; --red:#f87171; --yellow:#fbbf24;
+  }
+  html,body { background:#000; color:var(--text); font-family:'Inter',-apple-system,'Segoe UI',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; min-height:100vh; }
+  .bg-layer { position:fixed; inset:0; z-index:-2;
+    background:radial-gradient(ellipse 80% 60% at 15% 10%,rgba(120,80,255,.28),transparent 60%),
+    radial-gradient(ellipse 70% 55% at 85% 20%,rgba(0,200,255,.2),transparent 60%),
+    radial-gradient(ellipse 90% 70% at 50% 100%,rgba(255,60,180,.18),transparent 60%),#000;
+    animation:floatBg 20s ease-in-out infinite alternate; }
+  @keyframes floatBg { to { transform:scale(1.08) translate(-1%,-1%); } }
+  .ic { width:1em; height:1em; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none; stroke:currentColor; flex-shrink:0; }
+  .hidden { display:none !important; }
+  .mono { font-family:'JetBrains Mono',monospace; }
+
+  /* NAV */
+  nav { position:fixed; top:12px; left:50%; transform:translateX(-50%); width:calc(100% - 24px); max-width:1180px; z-index:100;
+    display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px; border-radius:20px;
+    background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));
+    backdrop-filter:blur(24px) saturate(180%); -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid rgba(255,255,255,.14); box-shadow:0 10px 40px -8px rgba(0,0,0,.6); }
+  @media(min-width:900px){ nav { flex-direction:row; justify-content:space-between; padding:10px 14px 10px 22px; top:18px; } }
+  .brand { display:flex; align-items:center; gap:11px; font-weight:700; font-size:16px; }
+  .brand-logo { width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.06)); border:1px solid rgba(255,255,255,.22); }
+  .brand b { color:rgba(255,255,255,.55); font-weight:500; }
+  .nav-right { display:flex; align-items:center; gap:10px; width:100%; }
+  @media(min-width:900px){ .nav-right { width:auto; } }
+  .nav-tabs { position:relative; display:flex; flex:1; background:rgba(0,0,0,.45); padding:4px; border-radius:14px; border:1px solid rgba(255,255,255,.08); overflow-x:auto; scrollbar-width:none; }
+  .nav-tabs::-webkit-scrollbar { display:none; }
+  .tab-btn { position:relative; z-index:2; padding:7px 12px; border-radius:10px; font-size:11.5px; font-weight:600; color:var(--text-dim); background:transparent; border:none; cursor:pointer; transition:color .3s; display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; }
+  .tab-btn:hover { color:var(--text); } .tab-btn.active { color:#000; }
+  .liquid-pill { position:absolute; top:4px; height:calc(100% - 8px); border-radius:10px; z-index:1; background:linear-gradient(135deg,#fff,#e0e0e0); box-shadow:0 4px 15px rgba(255,255,255,.3); transition:all .35s cubic-bezier(.25,1,.3,1); }
+  .user-chip { font-size:11px; color:var(--text-dim); white-space:nowrap; padding:6px 10px; border:1px solid rgba(255,255,255,.12); border-radius:20px; }
+
+  /* LAYOUT */
+  main { padding:135px 16px 60px; max-width:1180px; margin:0 auto; }
+  @media(min-width:900px){ main { padding-top:110px; } }
+  .auth-wrap { min-height:100vh; display:grid; place-items:center; padding:24px 16px; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; animation:fade .4s ease; }
+  @keyframes fade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  .card { width:100%; max-width:480px; margin:0 auto; padding:26px 22px 24px; border-radius:24px; background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.025)); backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,.14); box-shadow:0 30px 80px -20px rgba(0,0,0,.85); }
+  .card-wide { max-width:1100px; }
+  .head { text-align:center; margin-bottom:20px; }
+  .head-logo { width:50px; height:50px; border-radius:16px; margin:0 auto 14px; display:grid; place-items:center; font-size:22px; background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.05)); border:1px solid rgba(255,255,255,.2); }
+  .head h1 { font-size:20px; font-weight:700; margin-bottom:6px; }
+  .head p { font-size:12.5px; color:var(--text-dim); line-height:1.5; }
+  .grid2 { display:grid; grid-template-columns:1fr; gap:16px; }
+  @media(min-width:800px){ .grid2 { grid-template-columns:1fr 1fr; } }
+  .grid3 { display:grid; grid-template-columns:1fr; gap:12px; }
+  @media(min-width:800px){ .grid3 { grid-template-columns:repeat(3,1fr); } }
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:20px; }
+  .stat-card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:14px; }
+  .stat-card .label { font-size:11px; color:var(--text-mute); margin-bottom:4px; }
+  .stat-card .val { font-size:22px; font-weight:700; }
+  .sec { background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px; margin-bottom:16px; }
+  .sec h3 { font-size:13.5px; font-weight:700; margin-bottom:12px; color:var(--cyan); }
+  .muted { font-size:11.5px; color:var(--text-dim); line-height:1.6; }
+  .banner { margin:0 auto 16px; max-width:1100px; padding:10px 16px; border-radius:14px; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.35); color:var(--yellow); font-size:12.5px; display:flex; justify-content:space-between; gap:10px; align-items:center; }
+
+  /* MSG BOX & BULK RESULT STYLES */
+  .msg-box { display:none; padding:10px 12px; border-radius:12px; margin-bottom:12px; font-size:12px; line-height:1.4; }
+  .msg-box.show { display:flex; align-items:center; gap:8px; }
+  .msg-box.error { background:rgba(248,113,113,.15); border:1px solid rgba(248,113,113,.4); color:var(--red); }
+  .msg-box.success { background:rgba(74,222,128,.15); border:1px solid rgba(74,222,128,.4); color:var(--green); }
+  .bulk-item { display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); padding:8px 12px; border-radius:10px; margin-top:8px; font-size:12px; }
+  .bulk-item-num { font-weight:700; color:var(--cyan); }
+  .bulk-item-info { flex:1; overflow:hidden; }
+  .bulk-item-email { font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
+  .bulk-item-link { font-size:11px; color:var(--cyan); text-decoration:none; }
+  .bulk-item-link:hover { text-decoration:underline; }
+  .bulk-item-status.ok { color:var(--green); }
+  .bulk-item-status.fail { color:var(--red); }
+
+  /* FORMS */
+  form { display:flex; flex-direction:column; gap:12px; }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field label { font-size:12px; font-weight:500; color:var(--text-dim); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; }
+  .row > * { flex:1; min-width:100px; }
+  input,textarea,select { width:100%; padding:11px 13px; border-radius:12px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); color:var(--text); font-size:13px; font-family:inherit; outline:none; transition:.25s; }
+  input:focus,textarea:focus,select:focus { border-color:rgba(255,255,255,.35); box-shadow:0 0 15px rgba(255,255,255,.12); }
+  select option { background:#111; }
+  textarea { resize:vertical; min-height:90px; }
+  input[type=color] { padding:3px; height:42px; cursor:pointer; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.28s cubic-bezier(.16,1,.3,1); width:100%; text-decoration:none; }
+  .btn-primary { color:#0a0a0a; background:#fff; } .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 25px rgba(255,255,255,.3); }
+  .btn-glass { color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); } .btn-glass:hover { background:rgba(255,255,255,.16); }
+  .btn-danger { color:#fff; background:rgba(248,113,113,.2); border:1px solid rgba(248,113,113,.4); } .btn-danger:hover { background:rgba(248,113,113,.4); }
+  .btn-sm { width:auto; padding:5px 10px; font-size:11px; border-radius:9px; }
+  .switch-auth { margin-top:14px; text-align:center; font-size:12px; color:var(--text-dim); }
+  .switch-auth a { color:#fff; font-weight:600; text-decoration:underline; cursor:pointer; }
+
+  /* TABLE / LISTS */
+  .table-wrap { background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow-x:auto; margin-top:10px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; text-align:left; min-width:480px; }
+  th { background:rgba(255,255,255,.06); padding:10px 14px; color:var(--text-dim); font-weight:600; }
+  td { padding:10px 14px; border-top:1px solid rgba(255,255,255,.05); }
+  .badge { padding:2px 8px; border-radius:20px; font-size:9.5px; font-weight:600; display:inline-block; }
+  .b-green { background:rgba(74,222,128,.2); color:var(--green); border:1px solid rgba(74,222,128,.4); }
+  .b-red { background:rgba(248,113,113,.2); color:var(--red); border:1px solid rgba(248,113,113,.4); }
+  .kanban { display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px; }
+  @media(min-width:800px){ .kanban { grid-template-columns:repeat(3,1fr); } }
+  .col { background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px; min-height:90px; }
+  .col h4 { font-size:11.5px; color:var(--text-dim); margin-bottom:8px; }
+  .item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:9px 10px; margin-bottom:8px; font-size:12px; }
+  .item small { display:block; color:var(--text-mute); margin-top:2px; font-size:10.5px; }
+  .item .acts { display:flex; gap:5px; margin-top:8px; }
+  .preset { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .preset pre { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-dim); white-space:pre-wrap; word-break:break-word; margin:8px 0; max-height:110px; overflow:auto; }
+  .out { font-family:'JetBrains Mono',monospace; font-size:12px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:10px; margin-top:8px; white-space:pre-wrap; word-break:break-word; }
+  .preview { height:90px; border-radius:12px; border:1px solid rgba(255,255,255,.15); margin-top:8px; }
+  .big-timer { font-size:44px; font-weight:700; text-align:center; letter-spacing:2px; margin:6px 0 12px; }
+  .toast { position:fixed; top:70px; left:50%; transform:translateX(-50%) translateY(-20px); background:rgba(20,20,20,.95); border:1px solid rgba(255,255,255,.2); padding:8px 16px; border-radius:30px; font-size:12px; color:#fff; box-shadow:0 10px 30px rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:.3s; z-index:300; max-width:90vw; text-align:center; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .btn-glass.active { border-color:var(--cyan); background:rgba(103,232,249,.15); color:var(--cyan); }
+  .prog { width:100%; height:10px; background:rgba(255,255,255,.1); border-radius:5px; overflow:hidden; }
+  .prog > div { width:0%; height:100%; background:linear-gradient(90deg,var(--cyan),var(--green)); transition:width .25s; }
+  .dl-res { margin-top:16px; padding:16px; background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.3); border-radius:14px; text-align:center; }
+  .dl-err { margin-top:16px; padding:12px 14px; background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.3); border-radius:12px; color:var(--red); font-size:12px; line-height:1.5; }
+  .chat-container { display:flex; flex-direction:column; height:380px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:14px; overflow-y:auto; gap:12px; margin-bottom:12px; }
+  .chat-msg { max-width:85%; padding:10px 14px; border-radius:14px; font-size:12.5px; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+  .chat-msg.user { align-self:flex-end; background:linear-gradient(135deg,rgba(120,80,255,.4),rgba(0,200,255,.3)); border:1px solid rgba(255,255,255,.2); border-bottom-right-radius:2px; }
+  .chat-msg.ai { align-self:flex-start; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-bottom-left-radius:2px; }
+  .quick-prompts { display:flex; gap:6px; flex-wrap:wrap; }
+  .loader { border:2px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; width:14px; height:14px; animation:spin .8s linear infinite; display:inline-block; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ============ AUTH VIEW ============ -->
+<div id="authView" class="auth-wrap">
+  <div class="card">
+    <div id="loginBox">
+      <div class="head">
+        <div class="head-logo">🔐</div>
+        <h1>NAMEKTUKAM Dashboard</h1>
+        <p>Masuk untuk akses project tracker, preset library, dan tools.</p>
+      </div>
+      <form id="loginForm">
+        <div class="field"><label>Username</label><input id="loginUser" autocomplete="username" maxlength="32" required /></div>
+        <div class="field"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password" required /></div>
+        <button class="btn btn-primary" id="loginBtn">Masuk &rarr;</button>
+      </form>
+      <div class="switch-auth">Belum punya akun? <a onclick="showAuth('reg')">Daftar</a></div>
+    </div>
+    <div id="regBox" class="hidden">
+      <div class="head">
+        <div class="head-logo">✨</div>
+        <h1>Buat Akun Baru</h1>
+        <p>Cukup username dan password. Data tersimpan di browser ini.</p>
+      </div>
+      <form id="regForm">
+        <div class="field"><label>Username (3–32: huruf, angka, _ - .)</label><input id="regUser" autocomplete="username" maxlength="32" required /></div>
+        <div class="field"><label>Password (min. 8 karakter)</label><input id="regPass" type="password" autocomplete="new-password" required /></div>
+        <div class="field"><label>Ulangi Password</label><input id="regPass2" type="password" autocomplete="new-password" required /></div>
+        <button class="btn btn-primary">Daftar &rarr;</button>
+      </form>
+      <div class="switch-auth">Sudah punya akun? <a onclick="showAuth('login')">Masuk</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP VIEW ============ -->
+<div id="appView" class="hidden">
+  <nav>
+    <div class="brand"><div class="brand-logo">&lt;/&gt;</div><span>NAMEKTUKAM<b>Dev</b></span></div>
+    <div class="nav-right">
+      <div class="nav-tabs" id="navTabs">
+        <div class="liquid-pill" id="pill"></div>
+        <button class="tab-btn active" data-tab="home">🏠 Home</button>
+        <button class="tab-btn" data-tab="am">🎬 AM Hub</button>
+        <button class="tab-btn" data-tab="downloader">📥 Downloader</button>
+        <button class="tab-btn" data-tab="tools">🧰 Tools</button>
+        <button class="tab-btn" data-tab="ytta">▶️ YTTA</button>
+        <button class="tab-btn" data-tab="ai">🤖 AI Hub</button>
+        <button class="tab-btn" data-tab="admin">🛡️ Admin</button>
+        <button class="tab-btn" data-tab="account">👤 Akun</button>
+      </div>
+      <span class="user-chip" id="userChip"></span>
+    </div>
+  </nav>
+
+  <main>
+    <div id="broadcastBanner" class="banner hidden"><span id="broadcastText"></span><button class="btn btn-glass btn-sm" onclick="dismissBanner()">Tutup</button></div>
+
+    <!-- HOME -->
+    <section id="tab-home" class="tab-content active">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left"><h1 id="homeGreet">Halo!</h1><p>Ringkasan aktivitas kamu di dashboard.</p></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="label">Project Aktif</div><div class="val" id="stProj">0</div></div>
+          <div class="stat-card"><div class="label">Project Selesai</div><div class="val" id="stDone">0</div></div>
+          <div class="stat-card"><div class="label">Preset Tersimpan</div><div class="val" id="stPre">0</div></div>
+          <div class="stat-card"><div class="label">Pomodoro Selesai</div><div class="val" id="stPomo">0</div></div>
+        </div>
+        <div class="grid3">
+          <div class="sec"><h3>🎬 AM Hub</h3><p class="muted">Kelola project edit dan simpan preset keyframe/efek.</p><button class="btn btn-glass" style="margin-top:10px" onclick="goTab('am')">Buka</button></div>
+          <div class="sec"><h3>🧰 Tools</h3><p class="muted">Kalkulator frame, resolusi, gradient, warna, dan Pomodoro.</p><button class="btn btn-glass" style="margin-top:10px" onclick="goTab('tools')">Buka</button></div>
+          <div class="sec"><h3>▶️ YTTA</h3><p class="muted">Thumbnail grabber, tag generator, dan chapter formatter.</p><button class="btn btn-glass" style="margin-top:10px" onclick="goTab('ytta')">Buka</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AM HUB -->
+    <section id="tab-am" class="tab-content">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left">
+          <h1>Alight Motion Hub</h1>
+          <p>Aktivasi Alight Motion Premium, generate akun bulk, serta organisir project dan preset kamu.</p>
+        </div>
+
+        <div class="grid2">
+          <!-- AKTIVASI PREMIUM -->
+          <div class="sec">
+            <h3>📧 Aktivasi Alight Motion Premium</h3>
+            <div id="msgBox" class="msg-box"></div>
+            
+            <div class="field">
+              <label>1. Email Alight Motion</label>
+              <div class="row">
+                <input type="email" id="emailInput" placeholder="nama@email.com" />
+                <button type="button" class="btn btn-primary" id="sendBtn" style="width:auto;white-space:nowrap">Kirim Link</button>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:10px">
+              <label>2. Magic Link (dari Inbox Email)</label>
+              <input type="text" id="magicInput" placeholder="Tempel URL Magic Link di sini..." />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="activateBtn" style="margin-top:12px">
+              <span id="btnText"><i class="fas fa-shield-halved"></i> Verifikasi & Aktifkan</span>
+            </button>
+
+            <div class="row" style="margin-top:14px">
+              <button type="button" class="btn btn-glass" onclick="openOfficial()">Situs Resmi &rarr;</button>
+              <button type="button" class="btn btn-glass" onclick="openSubs()">Cek Langganan</button>
+            </div>
+          </div>
+
+          <!-- BULK GENERATOR -->
+          <div class="sec">
+            <h3>⚡ Bulk Account Generator</h3>
+            <div id="bulkMsgBox" class="msg-box"></div>
+            
+            <div class="field">
+              <label>Jumlah Akun</label>
+              <input type="number" id="bulkCount" value="1" min="1" max="10" />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="bulkBtn" onclick="doBulk()" style="margin-top:12px">
+              <span id="bulkBtnText"><i class="fas fa-layer-group"></i> Generate Akun Sekarang</span>
+            </button>
+
+            <div id="bulkResult" style="display:none; margin-top:14px">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+                <b id="bulkResultLabel" style="font-size:12px; color:var(--cyan)"></b>
+                <div class="row" style="width:auto; gap:6px">
+                  <button type="button" class="btn btn-glass btn-sm" onclick="copyBulk()"><i class="fas fa-copy"></i> Salin</button>
+                  <button type="button" class="btn btn-glass btn-sm" onclick="downloadBulk()"><i class="fas fa-download"></i> Unduh</button>
+                </div>
+              </div>
+              <div id="bulkList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:16px">
+          <div class="sec">
+            <h3>➕ Project Baru</h3>
+            <form id="projForm">
+              <div class="field"><label>Judul project</label><input id="projTitle" maxlength="80" required /></div>
+              <div class="row">
+                <div class="field"><label>Deadline (opsional)</label><input type="date" id="projDue" /></div>
+                <div class="field"><label>Status awal</label><select id="projStatus"><option value="idea">💡 Ide</option><option value="progress">🛠️ Dikerjakan</option><option value="done">✅ Selesai</option></select></div>
+              </div>
+              <button class="btn btn-primary">Tambah Project</button>
+            </form>
+          </div>
+          <div class="sec">
+            <h3>📋 Project Tracker</h3>
+            <div class="kanban">
+              <div class="col"><h4>💡 Ide</h4><div id="colIdea"></div></div>
+              <div class="col"><h4>🛠️ Dikerjakan</h4><div id="colProgress"></div></div>
+              <div class="col"><h4>✅ Selesai</h4><div id="colDone"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h3>🎛️ Preset Library</h3>
+          <form id="presetForm">
+            <div class="row">
+              <div class="field"><label>Nama preset</label><input id="preName" maxlength="60" required /></div>
+              <div class="field"><label>Kategori</label><select id="preCat"><option>Keyframe</option><option>Efek</option><option>Teks</option><option>Transisi</option><option>Warna</option><option>Lainnya</option></select></div>
+            </div>
+            <div class="field"><label>Isi / catatan langkah / nilai parameter</label><textarea id="preBody" maxlength="2000" required></textarea></div>
+            <button class="btn btn-primary">Simpan Preset</button>
+          </form>
+          <div class="row" style="margin-top:14px"><input id="preSearch" placeholder="Cari preset..." maxlength="100" /><select id="preFilter"><option value="">Semua kategori</option><option>Keyframe</option><option>Efek</option><option>Teks</option><option>Transisi</option><option>Warna</option><option>Lainnya</option></select></div>
+          <div id="presetList" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOWNLOADER -->
+    <section id="tab-downloader" class="tab-content">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left">
+          <h1>📥 Downloader Video &amp; Audio</h1>
+          <p>Unduh konten milikmu atau yang memang boleh diunduh dari YouTube, TikTok, Instagram, Facebook, X, dan lainnya. File langsung tersimpan ke perangkat.</p>
+        </div>
+        <div class="sec">
+          <h3>🔗 Tempel Link</h3>
+          <div class="field">
+            <label>URL video / audio</label>
+            <div class="row"><input type="url" id="dlUrlIn" placeholder="https://..." style="flex:3" /><button type="button" class="btn btn-glass" style="flex:1" onclick="pasteDlUrl()">📋 Tempel</button></div>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>Format</label>
+            <div class="row">
+              <button type="button" class="btn btn-glass dl-format-btn active" data-fmt="mp4" onclick="selectDlFormat('mp4')">🎬 MP4 (Video)</button>
+              <button type="button" class="btn btn-glass dl-format-btn" data-fmt="mp3" onclick="selectDlFormat('mp3')">🎵 MP3 (Audio)</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="dlStartBtn" onclick="processDownload()" style="margin-top:14px"><span>Mulai Unduh</span></button>
+
+          <div id="dlProgressContainer" class="hidden" style="margin-top:16px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;color:var(--text-dim)"><span id="dlStatusText">Memproses...</span><span id="dlPercentText">0%</span></div>
+            <div class="prog"><div id="dlProgressBar"></div></div>
+          </div>
+          <div id="dlErrBox" class="dl-err hidden"></div>
+          <div id="dlResBox" class="dl-res hidden">
+            <h4 style="color:var(--green);margin-bottom:6px">✅ Unduhan dimulai</h4>
+            <p id="dlMediaTitle" class="muted" style="margin-bottom:12px"></p>
+            <button type="button" id="dlLinkBtn" class="btn btn-primary" style="width:auto;padding:10px 22px">⬇️ Unduh Lagi</button>
+            <p class="muted" style="margin-top:8px">File tersedia sekitar 15 menit di server.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section id="tab-tools" class="tab-content">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left"><h1>Tools Editor</h1><p>Semua dihitung langsung di browser.</p></div>
+        <div class="grid2">
+          <div class="sec">
+            <h3>🎞️ Kalkulator Frame</h3>
+            <div class="row">
+              <div class="field"><label>FPS</label><select id="fcFps"><option>24</option><option>25</option><option>30</option><option selected>60</option><option>120</option></select></div>
+              <div class="field"><label>Durasi (detik)</label><input type="number" id="fcSec" min="0" step="0.01" value="10" /></div>
+              <div class="field"><label>atau Frame</label><input type="number" id="fcFrames" min="0" step="1" /></div>
+            </div>
+            <div class="out" id="fcOut">—</div>
+          </div>
+          <div class="sec">
+            <h3>📐 Resolusi &amp; Aspect Ratio</h3>
+            <div class="row">
+              <div class="field"><label>Lebar</label><input type="number" id="arW" value="1920" min="1" /></div>
+              <div class="field"><label>Tinggi</label><input type="number" id="arH" value="1080" min="1" /></div>
+              <div class="field"><label>Skala ke lebar</label><input type="number" id="arTo" value="1280" min="1" /></div>
+            </div>
+            <div class="out" id="arOut">—</div>
+          </div>
+          <div class="sec">
+            <h3>🌈 Gradient Generator</h3>
+            <div class="row">
+              <div class="field"><label>Warna 1</label><input type="color" id="gdA" value="#7850ff" /></div>
+              <div class="field"><label>Warna 2</label><input type="color" id="gdB" value="#00c8ff" /></div>
+              <div class="field"><label>Sudut (°)</label><input type="number" id="gdAng" value="135" min="0" max="360" /></div>
+            </div>
+            <div class="preview" id="gdPrev"></div>
+            <div class="out" id="gdOut"></div>
+            <button class="btn btn-glass" style="margin-top:8px" onclick="copyText(el('gdOut').textContent)">Salin CSS</button>
+          </div>
+          <div class="sec">
+            <h3>🎨 Konverter Warna</h3>
+            <div class="row">
+              <div class="field"><label>Picker</label><input type="color" id="clPick" value="#ff3cb4" /></div>
+              <div class="field"><label>HEX</label><input id="clHex" value="#ff3cb4" maxlength="7" /></div>
+            </div>
+            <div class="preview" id="clPrev" style="height:50px"></div>
+            <div class="out" id="clOut"></div>
+          </div>
+          <div class="sec" style="grid-column:1/-1">
+            <h3>🍅 Pomodoro Timer</h3>
+            <div class="big-timer mono" id="pomoTime">25:00</div>
+            <div class="row">
+              <select id="pomoMode"><option value="25">Fokus 25 menit</option><option value="50">Fokus 50 menit</option><option value="5">Istirahat 5 menit</option><option value="15">Istirahat 15 menit</option></select>
+              <button class="btn btn-primary" id="pomoStart">Mulai</button>
+              <button class="btn btn-glass" id="pomoReset">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- YTTA -->
+    <section id="tab-ytta" class="tab-content">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left"><h1>YTTA Tools</h1><p>Alat bantu konten YouTube.</p></div>
+        <div class="grid2">
+          <div class="sec">
+            <h3>🖼️ Thumbnail Grabber</h3>
+            <div class="field"><label>Link video / ID video</label><input id="ytUrl" placeholder="https://youtu.be/xxxxxxxxxxx" /></div>
+            <div id="ytOut" style="margin-top:10px"></div>
+          </div>
+          <div class="sec">
+            <h3>🏷️ Tag Generator</h3>
+            <div class="field"><label>Kata kunci (pisah koma / baris baru)</label><textarea id="tagIn" placeholder="alight motion, tutorial, edit video" maxlength="1000"></textarea></div>
+            <div class="out" id="tagOut">—</div>
+            <button class="btn btn-glass" style="margin-top:8px" onclick="copyText(el('tagOut').dataset.v||'')">Salin Tag</button>
+          </div>
+          <div class="sec">
+            <h3>📝 Penghitung Judul</h3>
+            <div class="field"><label>Judul video</label><input id="ttlIn" maxlength="150" /></div>
+            <div class="out" id="ttlOut">0 / 100 karakter</div>
+          </div>
+          <div class="sec">
+            <h3>⏱️ Chapter Formatter</h3>
+            <div class="field"><label>Satu baris per chapter: "0:00 Intro"</label><textarea id="chIn" placeholder="0:00 Intro&#10;1:30 Materi&#10;5:10 Penutup" maxlength="2000"></textarea></div>
+            <div class="out" id="chOut">—</div>
+            <button class="btn btn-glass" style="margin-top:8px" onclick="copyText(el('chOut').dataset.v||'')">Salin Chapter</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI HUB -->
+    <section id="tab-ai" class="tab-content">
+      <div class="card card-wide">
+        <div class="head" style="text-align:left"><h1>🤖 AI Hub</h1><p>Asisten ide konten, skrip, dan SEO memakai Google Gemini API v1beta Terbaru.</p></div>
+        <div class="grid2">
+          <div class="sec">
+            <h3>⚙️ API Key & Provider</h3>
+            <p class="muted" style="margin-bottom:10px">Key disimpan lokal di browser. Mendukung berbagai model AI modern.</p>
+            <div class="field"><label>Gemini API Key</label><input type="password" id="aiApiKey" placeholder="AIza..." autocomplete="off" /></div>
+            <div class="field" style="margin-top:8px">
+              <label>Pilihan Model AI (Terbaru)</label>
+              <select id="aiModel">
+                <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Tercepat & Cerdas)</option>
+                <option value="gemini-2.5-pro">Gemini 2.5 Pro (Paling Cerdas / Kompleks)</option>
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+              </select>
+            </div>
+            <div class="row" style="margin-top:10px"><button class="btn btn-primary" onclick="saveAiKey()">Simpan Setting AI</button><a class="btn btn-glass" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Dapatkan Key</a></div>
+            <div id="aiKeyStatus" style="margin-top:10px"></div>
+          </div>
+          <div class="sec">
+            <h3>⚡ Prompt Cepat</h3>
+            <div class="quick-prompts">
+              <button class="btn btn-glass btn-sm" data-p="Berikan 5 ide konten Alight Motion yang cocok untuk TikTok dan Shorts." onclick="quickPrompt(this.dataset.p)">💡 Ide Konten</button>
+              <button class="btn btn-glass btn-sm" data-p="Buatkan skrip video pendek 30 detik tentang tutorial transisi smooth di Alight Motion." onclick="quickPrompt(this.dataset.p)">📝 Skrip Shorts</button>
+              <button class="btn btn-glass btn-sm" data-p="Buatkan judul, deskripsi, dan tag YouTube SEO untuk video tutorial Alight Motion." onclick="quickPrompt(this.dataset.p)">🏷️ SEO YouTube</button>
+              <button class="btn btn-glass btn-sm" data-p="Sarankan kombinasi efek dan keyframe di Alight Motion untuk membuat edit velocity yang aesthetic." onclick="quickPrompt(this.dataset.p)">🎨 Konsep Preset</button>
+            </div>
+          </div>
+        </div>
+        <div class="sec">
+          <h3>💬 Chat</h3>
+          <div class="chat-container" id="aiChatBox"><div class="chat-msg ai">Halo! Saya AI Assistant terupdate. Tanya apa saja soal ide konten, skrip, atau editing.</div></div>
+          <div class="row"><input id="aiInput" placeholder="Ketik pertanyaan..." style="flex:4" maxlength="1000" /><button class="btn btn-primary" id="aiSendBtn" onclick="sendAiMessage()" style="flex:1">Kirim</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="tab-admin" class="tab-content">
+      <div class="card card-wide">
+        <div id="adminLock" style="max-width:400px;margin:20px auto;text-align:center">
+          <div class="head-logo">🛡️</div>
+          <h1 style="font-size:18px;margin-bottom:6px" id="adminLockTitle">Akses Owner</h1>
+          <p class="muted" id="adminLockDesc" style="margin-bottom:14px"></p>
+          <form id="adminPinForm">
+            <input type="password" id="adminPin" placeholder="PIN owner" style="text-align:center" required />
+            <input type="password" id="adminPin2" placeholder="Ulangi PIN" style="text-align:center" class="hidden" />
+            <button class="btn btn-primary" id="adminPinBtn">Buka Panel &rarr;</button>
+          </form>
+        </div>
+
+        <div id="adminPanel" class="hidden">
+          <div class="head" style="text-align:left;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:12px">
+            <div><h1>Owner Control Center</h1><p style="color:var(--cyan)">NAMEKTUKAM Admin v4 (Real-Time Live Monitor Enabled)</p></div>
+            <button class="btn btn-danger btn-sm" onclick="lockAdmin()">Kunci</button>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="label">Total User</div><div class="val" id="adUsers">0</div></div>
+            <div class="stat-card"><div class="label">Total Log</div><div class="val" id="adLogs">0</div></div>
+            <div class="stat-card"><div class="label">Server</div><div class="val" id="adServer">ONLINE</div></div>
+            <div class="stat-card"><div class="label">Batas Item/User</div><div class="val" id="adQuota">200</div></div>
+          </div>
+          <div class="grid2">
+            <div>
+              <div class="sec">
+                <h3>⚡ Quick Action</h3>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <button class="btn btn-glass" id="btnMaint" onclick="toggleMaint()">Maintenance</button>
+                  <button class="btn btn-danger" onclick="clearLogs()">Hapus Semua Log</button>
+                  <button class="btn btn-glass" onclick="changeOwnerPin()">Ganti PIN Owner</button>
+                </div>
+              </div>
+              <div class="sec">
+                <h3>📊 Batas Item per User</h3>
+                <form id="quotaForm"><input type="number" id="quotaIn" placeholder="mis. 200" min="1" max="5000" required /><button class="btn btn-primary">Update</button></form>
+                <p class="muted" style="margin-top:8px">Membatasi jumlah project dan preset per akun.</p>
+              </div>
+            </div>
+            <div>
+              <div class="sec">
+                <h3>🚫 Ban / Unban</h3>
+                <form id="banForm"><input id="banIn" placeholder="Username" required /><div class="row"><button class="btn btn-danger">Ban</button><button type="button" class="btn btn-glass" onclick="unbanUser()">Unban</button></div></form>
+              </div>
+              <div class="sec">
+                <h3>📢 Broadcast</h3>
+                <form id="bcForm"><input id="bcIn" placeholder="Pesan pengumuman..." maxlength="200" /><div class="row"><button class="btn btn-primary">Kirim</button><button type="button" class="btn btn-glass" onclick="clearBroadcast()">Hapus</button></div></form>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <h3>👥 Daftar User (Real-Time Monitor <span class="badge b-green" style="animation: pulse 1.5s infinite;">LIVE</span>)</h3>
+            <div class="table-wrap"><table><thead><tr><th>Username</th><th>Email AM</th><th>Dibuat</th><th>Item</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="userTable"></tbody></table></div>
+          </div>
+
+          <div class="sec">
+            <h3>👁 Log Aktivitas (Real-Time Live)</h3>
+            <div class="row"><input id="logSearch" placeholder="Filter username / status..." /><button class="btn btn-glass" onclick="exportLogsCSV()">Export CSV</button></div>
+            <div class="table-wrap"><table><thead><tr><th>Username</th><th>Email</th><th>Waktu</th><th>Aktivitas</th></tr></thead><tbody id="logTable"></tbody></table></div>
+          </div>
+
+          <div class="sec">
+            <h3>💾 Backup &amp; Restore</h3>
+            <div class="row"><button class="btn btn-glass" onclick="backupAll()">Download Backup (.json)</button><button class="btn btn-glass" onclick="el('restoreFile').click()">Restore dari File</button></div>
+            <input type="file" id="restoreFile" accept="application/json" class="hidden" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section id="tab-account" class="tab-content">
+      <div class="card">
+        <div class="head"><div class="head-logo">👤</div><h1 id="accName">Akun</h1><p id="accMeta"></p></div>
+        <div class="sec">
+          <h3>🔑 Ganti Password</h3>
+          <form id="pwForm">
+            <input type="password" id="pwOld" placeholder="Password lama" autocomplete="current-password" required />
+            <input type="password" id="pwNew" placeholder="Password baru (min. 8)" autocomplete="new-password" required />
+            <button class="btn btn-primary">Update Password</button>
+          </form>
+        </div>
+        <div class="sec">
+          <h3>📦 Data Saya</h3>
+          <button class="btn btn-glass" onclick="exportMyData()">Download Data Saya (.json)</button>
+        </div>
+        <div class="sec">
+          <h3>⚠️ Zona Berbahaya</h3>
+          <div class="row"><button class="btn btn-glass" onclick="logout()">Keluar</button><button class="btn btn-danger" onclick="deleteMyAccount()">Hapus Akun</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const el = id => document.getElementById(id);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
+/* Proteksi Sanitasi URL */
+function safeUrl(url) {
+  if (!url) return "#";
+  const str = String(url).trim();
+  if (/^(https?:\/\/|\/)/i.test(str)) {
+    return esc(str);
+  }
+  return "#";
+}
+
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const now = () => new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+
+/* ================= STATE ================= */
+const KEY = "namektukam_dashboard_v4";
+const DEF = { users: [], bannedUsers: [], logs: [], quota: 200, maintenance: false, broadcast: "", broadcastId: 0, ownerPin: null, aiApiKey: "", aiModel: "gemini-2.5-flash" };
+let state = load();
+let me = "";            // username aktif
+let adminOpen = false;  // status panel admin
+
+/* Broadcast Channel & Polling untuk Sinkronisasi Real-Time Lengkap Antar Tab/Window */
+const rtChannel = new BroadcastChannel("namektukam_realtime_sync");
+
+rtChannel.onmessage = (event) => {
+  if (event.data && event.data.type === "STATE_UPDATE") {
+    state = load();
+    if (me && !curUser()) logout(true);
+    if (me && isBanned(me)) { toast("Akun kamu di-BAN oleh Owner."); logout(true); }
+    if (me) renderAll();
+    if (adminOpen) renderAdmin();
+  }
+};
+
+/* Polling Real-Time Backup (Memastikan Update Instant tanpa Delay) */
+setInterval(() => {
+  const currentLocal = localStorage.getItem(KEY);
+  if (currentLocal) {
+    state = load();
+    if (adminOpen) renderAdmin();
+  }
+}, 1000);
+
+function notifyStateChange() {
+  save();
+  rtChannel.postMessage({ type: "STATE_UPDATE", timestamp: Date.now() });
+}
+
+/* Rate Limiting */
+let loginAttempts = 0;
+let loginLockUntil = 0;
+let pinAttempts = 0;
+let pinLockUntil = 0;
+
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (s) return { ...DEF, ...s };
+    const old = JSON.parse(localStorage.getItem("namektukam_dashboard_v3") || "null");
+    if (old) return { ...DEF, users: old.users || [], bannedUsers: old.bannedUsers || [], logs: old.userLogs || [] };
+  } catch {}
+  return { ...DEF };
+}
+
+function save() { 
+  try { 
+    localStorage.setItem(KEY, JSON.stringify(state)); 
+  } catch { 
+    toast("Gagal menyimpan: penyimpanan browser penuh/diblokir."); 
+  } 
+}
+
+async function sha(s) {
+  if (window.crypto && crypto.subtle) {
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+  let h = 5381; for (const c of s) h = ((h << 5) + h + c.charCodeAt(0)) | 0; return 'weak' + h;
+}
+const newSalt = () => uid().replace(/-/g, '');
+
+const findUser = n => state.users.find(u => u.username.toLowerCase() === String(n).toLowerCase());
+const isBanned = n => state.bannedUsers.some(b => b.toLowerCase() === String(n).toLowerCase());
+const curUser = () => findUser(me);
+
+function log(status, email) {
+  state.logs.unshift({ username: me || "-", email: email || curUser()?.amEmail || "-", status, time: now() });
+  state.logs = state.logs.slice(0, 300); 
+  notifyStateChange();
+}
+
+function toast(msg) {
+  const t = el('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+async function copyText(v) {
+  if (!v) return toast("Tidak ada yang disalin.");
+  try { await navigator.clipboard.writeText(v); toast("Disalin ✓"); } catch { toast("Gagal menyalin, salin manual."); }
+}
+
+function download(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function guard() {
+  if (!me) return false;
+  if (isBanned(me)) { toast("Akun kamu di-BAN oleh Owner."); logout(true); return false; }
+  if (state.maintenance && !adminOpen) { toast("Server maintenance. Coba lagi nanti."); return false; }
+  return true;
+}
+
+/* ================= AUTH ================= */
+function showAuth(w) { el('loginBox').classList.toggle('hidden', w !== 'login'); el('regBox').classList.toggle('hidden', w !== 'reg'); }
+
+el('regForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (state.maintenance) return toast("Pendaftaran ditutup sementara (maintenance).");
+  const u = el('regUser').value.trim(), p = el('regPass').value, p2 = el('regPass2').value;
+  if (!/^[a-zA-Z0-9_.-]{3,32}$/.test(u)) return toast("Username 3–32 karakter: huruf, angka, _ - .");
+  if (p.length < 8) return toast("Password minimal 8 karakter.");
+  if (p !== p2) return toast("Konfirmasi password tidak sama.");
+  if (findUser(u)) return toast("Username sudah dipakai.");
+  const salt = newSalt();
+  state.users.push({ username: u, salt, hash: await sha(salt + p), createdAt: Date.now(), amEmail: "", projects: [], presets: [], pomos: 0 });
+  me = u; 
+  log("Registrasi"); 
+  notifyStateChange();
+  enterApp(); 
+  toast(`Selamat datang, ${u}!`);
+});
+
+el('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (Date.now() < loginLockUntil) return toast(`Terlalu banyak percobaan gagal. Tunggu ${Math.ceil((loginLockUntil - Date.now())/1000)} detik.`);
+
+  const u = el('loginUser').value.trim(), p = el('loginPass').value;
+  const user = findUser(u);
+  if (isBanned(u)) return toast("Akun ini di-BAN oleh Owner.");
+  if (state.maintenance) return toast("Server maintenance. Coba lagi nanti.");
+  let ok = false;
+  if (user) {
+    if (user.password !== undefined && !user.hash) {
+      ok = user.password === p;
+      if (ok) { user.salt = newSalt(); user.hash = await sha(user.salt + p); delete user.password; }
+    } else ok = user.hash === await sha(user.salt + p);
+  }
+  
+  if (!ok) {
+    loginAttempts++;
+    if (loginAttempts >= 5) {
+      loginLockUntil = Date.now() + 30000;
+      loginAttempts = 0;
+      return toast("5x Gagal! Terkunci sementara selama 30 detik.");
+    }
+    return toast("Username atau password salah.");
+  }
+
+  loginAttempts = 0;
+  user.projects ||= []; user.presets ||= []; user.pomos ||= 0;
+  me = user.username; 
+  log("Login"); 
+  notifyStateChange();
+  enterApp();
+});
+
+function enterApp() {
+  el('authView').classList.add('hidden'); el('appView').classList.remove('hidden');
+  el('loginForm').reset(); el('regForm').reset();
+  renderAll(); goTab('home');
+  setTimeout(() => movePill(document.querySelector('.tab-btn.active')), 50);
+}
+
+function logout(silent) {
+  if (me && !silent) log("Logout");
+  me = ""; adminOpen = false; stopPomo();
+  el('appView').classList.add('hidden'); el('authView').classList.remove('hidden');
+  lockAdmin(true); showAuth('login');
+}
+
+/* ================= NAV ================= */
+function movePill(btn) { const p = el('pill'); if (!btn) return; p.style.width = btn.offsetWidth + 'px'; p.style.left = btn.offsetLeft + 'px'; }
+function goTab(id) {
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === 'tab-' + id));
+  document.querySelectorAll('.tab-btn').forEach(b => { const a = b.dataset.tab === id; b.classList.toggle('active', a); if (a) { movePill(b); b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } });
+  if (id === 'admin') renderAdminLock();
+  if (id === 'home' || id === 'account') renderHome();
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
+window.addEventListener('resize', () => movePill(document.querySelector('.tab-btn.active')));
+
+/* ================= RENDER ================= */
+function renderAll() {
+  const u = curUser(); if (!u) return;
+  el('userChip').textContent = '@' + u.username;
+  if(el('emailInput')) el('emailInput').value = u.amEmail || "";
+  renderHome(); renderProjects(); renderPresets(); renderBanner(); renderAdmin(); updateAiKeyUI();
+}
+
+function renderHome() {
+  const u = curUser(); if (!u) return;
+  const h = new Date().getHours();
+  el('homeGreet').textContent = `${h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 19 ? 'Selamat sore' : 'Selamat malam'}, ${u.username}!`;
+  el('stProj').textContent = u.projects.filter(p => p.status !== 'done').length;
+  el('stDone').textContent = u.projects.filter(p => p.status === 'done').length;
+  el('stPre').textContent = u.presets.length;
+  el('stPomo').textContent = u.pomos || 0;
+  el('accName').textContent = '@' + u.username;
+  el('accMeta').textContent = 'Terdaftar ' + new Date(u.createdAt).toLocaleDateString('id-ID', { dateStyle: 'long' });
+}
+
+function renderBanner() {
+  const seen = sessionStorage.getItem('bcSeen');
+  const show = state.broadcast && String(state.broadcastId) !== seen;
+  el('broadcastBanner').classList.toggle('hidden', !show);
+  el('broadcastText').textContent = '📢 ' + state.broadcast;
+}
+
+function dismissBanner() { try { sessionStorage.setItem('bcSeen', String(state.broadcastId)); } catch {} renderBanner(); }
+
+/* ================= AM HUB ================= */
+const openOfficial = () => window.open("https://alightmotion.com/", "_blank", "noopener,noreferrer");
+const openSubs = () => window.open(/iPhone|iPad|Mac/i.test(navigator.userAgent) ? "https://apps.apple.com/account/subscriptions" : "https://play.google.com/store/account/subscriptions", "_blank", "noopener,noreferrer");
+
+const itemCount = u => u.projects.length + u.presets.length;
+function overQuota(u) { if (itemCount(u) >= state.quota) { toast(`Batas ${state.quota} item per user tercapai.`); return true; } return false; }
+
+el('projForm').addEventListener('submit', e => {
+  e.preventDefault(); if (!guard()) return;
+  const u = curUser(); if (overQuota(u)) return;
+  u.projects.unshift({ id: uid(), title: el('projTitle').value.trim(), due: el('projDue').value, status: el('projStatus').value, created: Date.now() });
+  e.target.reset(); log("Project dibuat"); notifyStateChange(); renderProjects(); renderHome(); toast("Project ditambahkan.");
+});
+
+const ORDER = ['idea', 'progress', 'done'];
+function renderProjects() {
+  const u = curUser(); if (!u) return;
+  const map = { idea: 'colIdea', progress: 'colProgress', done: 'colDone' };
+  ORDER.forEach(s => {
+    const items = u.projects.filter(p => p.status === s);
+    el(map[s]).innerHTML = items.length ? items.map(p => {
+      const late = p.due && s !== 'done' && new Date(p.due) < new Date(new Date().toDateString());
+      return `<div class="item"><b>${esc(p.title)}</b>${p.due ? `<small style="${late ? 'color:var(--red)' : ''}">📅 ${esc(p.due)}${late ? ' (lewat)' : ''}</small>` : ''}
+        <div class="acts">
+          ${s !== 'idea' ? `<button class="btn btn-glass btn-sm" onclick="moveProj('${p.id}',-1)">◀</button>` : ''}
+          ${s !== 'done' ? `<button class="btn btn-glass btn-sm" onclick="moveProj('${p.id}',1)">▶</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="delProj('${p.id}')">✕</button>
+        </div></div>`;
+    }).join('') : `<p class="muted">Kosong.</p>`;
+  });
+}
+
+function moveProj(id, d) {
+  if (!guard()) return; const p = curUser().projects.find(x => x.id === id); if (!p) return;
+  p.status = ORDER[Math.max(0, Math.min(2, ORDER.indexOf(p.status) + d))]; 
+  notifyStateChange(); renderProjects(); renderHome();
+  if (p.status === 'done') log("Project selesai");
+}
+
+function delProj(id) {
+  if (!guard() || !confirm("Hapus project ini?")) return;
+  const u = curUser(); u.projects = u.projects.filter(p => p.id !== id); 
+  notifyStateChange(); renderProjects(); renderHome();
+}
+
+el('presetForm').addEventListener('submit', e => {
+  e.preventDefault(); if (!guard()) return;
+  const u = curUser(); if (overQuota(u)) return;
+  u.presets.unshift({ id: uid(), name: el('preName').value.trim(), cat: el('preCat').value, body: el('preBody').value, created: Date.now() });
+  e.target.reset(); log("Preset disimpan"); notifyStateChange(); renderPresets(); renderHome(); toast("Preset disimpan.");
+});
+
+function renderPresets() {
+  const u = curUser(); if (!u) return;
+  const q = el('preSearch').value.trim().toLowerCase(), f = el('preFilter').value;
+  const list = u.presets.filter(p => (!f || p.cat === f) && (!q || (p.name + p.body).toLowerCase().includes(q)));
+  el('presetList').innerHTML = list.length ? list.map(p => `
+    <div class="preset"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:13px">${esc(p.name)}</b><span class="badge b-green">${esc(p.cat)}</span></div>
+      <pre>${esc(p.body)}</pre>
+      <div class="row"><button class="btn btn-glass btn-sm" onclick="copyPreset('${p.id}')">Salin</button><button class="btn btn-danger btn-sm" onclick="delPreset('${p.id}')">Hapus</button></div></div>`).join('')
+    : `<p class="muted">Belum ada preset yang cocok.</p>`;
+}
+el('preSearch').addEventListener('input', renderPresets); el('preFilter').addEventListener('change', renderPresets);
+const copyPreset = id => copyText(curUser().presets.find(p => p.id === id)?.body);
+function delPreset(id) { if (!guard() || !confirm("Hapus preset ini?")) return; const u = curUser(); u.presets = u.presets.filter(p => p.id !== id); notifyStateChange(); renderPresets(); renderHome(); }
+
+/* ================= TOOLS ================= */
+function tc(frames, fps) {
+  const t = Math.floor(frames / fps), f = Math.round(frames % fps), p = n => String(n).padStart(2, '0');
+  return `${p(Math.floor(t / 3600))}:${p(Math.floor(t % 3600 / 60))}:${p(t % 60)}:${p(f)}`;
+}
+function calcFrames(from) {
+  const fps = +el('fcFps').value;
+  if (from === 'frames' && el('fcFrames').value !== '') el('fcSec').value = (+el('fcFrames').value / fps).toFixed(3).replace(/\.?0+$/, '');
+  const sec = +el('fcSec').value || 0, fr = Math.round(sec * fps);
+  if (from !== 'frames') el('fcFrames').value = fr;
+  el('fcOut').textContent = `${sec} detik × ${fps} fps = ${fr} frame\nTimecode: ${tc(fr, fps)}`;
+}
+el('fcFps').addEventListener('change', () => calcFrames('sec'));
+el('fcSec').addEventListener('input', () => calcFrames('sec'));
+el('fcFrames').addEventListener('input', () => calcFrames('frames'));
+
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+function calcRatio() {
+  const w = +el('arW').value, h = +el('arH').value, to = +el('arTo').value;
+  if (!(w > 0 && h > 0)) return el('arOut').textContent = "Isi lebar & tinggi.";
+  const g = gcd(w, h), nh = Math.round(to * h / w);
+  el('arOut').textContent = `Rasio: ${w / g}:${h / g}  (${(w / h).toFixed(3)})\nMegapiksel: ${(w * h / 1e6).toFixed(2)} MP\nSkala ke ${to}px lebar → ${to} × ${nh}${nh % 2 ? '  (tinggi ganjil, genapkan: ' + (nh + 1) + ')' : ''}`;
+}
+['arW', 'arH', 'arTo'].forEach(i => el(i).addEventListener('input', calcRatio));
+
+function calcGrad() {
+  const css = `background: linear-gradient(${+el('gdAng').value || 0}deg, ${el('gdA').value}, ${el('gdB').value});`;
+  el('gdOut').textContent = css; el('gdPrev').setAttribute('style', css);
+}
+['gdA', 'gdB', 'gdAng'].forEach(i => el(i).addEventListener('input', calcGrad));
+
+function hexToRgb(h) { const m = /^#?([0-9a-f]{6})$/i.exec(h.trim()); if (!m) return null; const n = parseInt(m[1], 16); return [n >> 16, n >> 8 & 255, n & 255]; }
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, s = 0;
+  if (mx !== mn) { const d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+  return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+}
+function calcColor(src) {
+  const raw = src === 'pick' ? el('clPick').value : el('clHex').value, rgb = hexToRgb(raw);
+  if (!rgb) return el('clOut').textContent = "HEX tidak valid (contoh #ff3cb4).";
+  const hex = '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+  if (src === 'pick') el('clHex').value = hex; else el('clPick').value = hex;
+  const [h, s, l] = rgbToHsl(...rgb); el('clPrev').style.background = hex;
+  el('clOut').textContent = `HEX: ${hex}\nRGB: ${rgb.join(', ')}\nHSL: ${h}°, ${s}%, ${l}%`;
+}
+el('clPick').addEventListener('input', () => calcColor('pick')); el('clHex').addEventListener('input', () => calcColor('hex'));
+
+/* Pomodoro */
+let pomo = { left: 1500, run: false, timer: null };
+const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+function drawPomo() { el('pomoTime').textContent = fmt(pomo.left); el('pomoStart').textContent = pomo.run ? 'Jeda' : 'Mulai'; document.title = pomo.run ? `${fmt(pomo.left)} — NAMEKTUKAM` : 'NAMEKTUKAM — Creator Dashboard'; }
+function stopPomo() { clearInterval(pomo.timer); pomo.run = false; drawPomo(); }
+el('pomoStart').addEventListener('click', () => {
+  if (pomo.run) return stopPomo();
+  pomo.run = true;
+  pomo.timer = setInterval(() => {
+    pomo.left--; drawPomo();
+    if (pomo.left <= 0) {
+      stopPomo(); pomo.left = +el('pomoMode').value * 60; drawPomo();
+      if (+el('pomoMode').value >= 25 && curUser()) { curUser().pomos = (curUser().pomos || 0) + 1; notifyStateChange(); renderHome(); }
+      toast("⏰ Waktu habis!");
+    }
+  }, 1000); drawPomo();
+});
+el('pomoReset').addEventListener('click', () => { stopPomo(); pomo.left = +el('pomoMode').value * 60; drawPomo(); });
+el('pomoMode').addEventListener('change', () => { stopPomo(); pomo.left = +el('pomoMode').value * 60; drawPomo(); });
+
+/* ================= YTTA ================= */
+el('ytUrl').addEventListener('input', () => {
+  const v = el('ytUrl').value.trim(); if (!v) return el('ytOut').innerHTML = '';
+  const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/) || v.match(/^([\w-]{11})$/);
+  if (!m) return el('ytOut').innerHTML = '<p class="muted">Link / ID tidak dikenali.</p>';
+  const id = m[1], base = safeUrl(`https://img.youtube.com/vi/${id}/`);
+  el('ytOut').innerHTML = `<img src="${base}hqdefault.jpg" alt="Thumbnail" style="width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.15)" />
+    <div class="row" style="margin-top:8px">
+      <a class="btn btn-glass btn-sm" target="_blank" rel="noopener noreferrer" href="${base}maxresdefault.jpg">Max (1280p)</a>
+      <a class="btn btn-glass btn-sm" target="_blank" rel="noopener noreferrer" href="${base}hqdefault.jpg">HQ (480p)</a>
+      <a class="btn btn-glass btn-sm" target="_blank" rel="noopener noreferrer" href="${base}mqdefault.jpg">MQ (320p)</a></div>
+    <p class="muted" style="margin-top:6px">Max tidak tersedia untuk semua video.</p>`;
+});
+el('tagIn').addEventListener('input', () => {
+  const tags = [...new Set(el('tagIn').value.split(/[,\n]/).map(t => t.trim().toLowerCase()).filter(Boolean))];
+  let out = [], len = 0; for (const t of tags) { if (len + t.length + 1 > 500) break; out.push(t); len += t.length + 1; }
+  const v = out.join(', '); el('tagOut').dataset.v = v;
+  el('tagOut').textContent = v ? `${v}\n\n${out.length} tag · ${v.length}/500 karakter${out.length < tags.length ? ' (sisanya dipotong, batas YouTube)' : ''}` : '—';
+});
+el('ttlIn').addEventListener('input', () => {
+  const n = el('ttlIn').value.length; el('ttlOut').textContent = `${n} / 100 karakter` + (n > 100 ? ' ⚠️ melebihi batas' : n > 60 ? ' · bagian akhir bisa terpotong di hasil pencarian' : n ? ' · aman' : '');
+});
+el('chIn').addEventListener('input', () => {
+  const lines = el('chIn').value.split('\n').map(l => l.trim()).filter(Boolean), res = [], warn = []; let prev = -1;
+  for (const l of lines) {
+    const m = l.match(/^(?:(\d+):)?(\d{1,2}):(\d{2})\s+(.+)$/); if (!m) { warn.push(`Format salah: "${l}"`); continue; }
+    const s = (+(m[1] || 0)) * 3600 + +m[2] * 60 + +m[3];
+    if (prev >= 0 && s - prev < 10) warn.push(`"${m[4]}" kurang dari 10 detik dari chapter sebelumnya`);
+    prev = s; const h = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
+    res.push(`${h ? h + ':' + String(mm).padStart(2, '0') : mm}:${String(ss).padStart(2, '0')} ${m[4]}`);
+  }
+  if (res.length && !res[0].startsWith('0:00')) warn.push('Chapter pertama harus 0:00');
+  if (res.length && res.length < 3) warn.push('YouTube butuh minimal 3 chapter');
+  el('chOut').dataset.v = res.join('\n');
+  el('chOut').textContent = res.length || warn.length ? res.join('\n') + (warn.length ? '\n\n⚠️ ' + warn.join('\n⚠️ ') : '\n\n✓ Valid') : '—';
+});
+
+/* ================= DOWNLOADER ================= */
+const DL_BACKEND_URL = "";
+const DL_API = (DL_BACKEND_URL || (location.protocol === 'file:' ? 'http://localhost:3000' : '')).replace(/\/$/, '');
+let dlFmt = 'mp4', dlBusy = false, dlES = null;
+
+function selectDlFormat(f) { dlFmt = f; document.querySelectorAll('.dl-format-btn').forEach(b => b.classList.toggle('active', b.dataset.fmt === f)); }
+async function pasteDlUrl() {
+  try { el('dlUrlIn').value = (await navigator.clipboard.readText()).trim(); toast("URL ditempel."); }
+  catch { toast("Tidak bisa membaca clipboard, tempel manual."); }
+}
+function dlSetBusy(b) { dlBusy = b; el('dlStartBtn').disabled = b; el('dlStartBtn').firstElementChild.textContent = b ? 'Memproses...' : 'Mulai Unduh'; }
+function dlProgress(pct, text) { el('dlProgressBar').style.width = pct + '%'; el('dlPercentText').textContent = pct + '%'; if (text) el('dlStatusText').textContent = text; }
+function dlShowError(msg) {
+  dlSetBusy(false); el('dlProgressContainer').classList.add('hidden'); el('dlResBox').classList.add('hidden');
+  el('dlErrBox').textContent = '⚠️ ' + msg; el('dlErrBox').classList.remove('hidden');
+}
+function dlSave(id, filename) {
+  const a = document.createElement('a');
+  a.href = `${DL_API}/api/dl/file/${encodeURIComponent(id)}`; a.download = filename || '';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+async function processDownload() {
+  if (!guard() || dlBusy) return;
+  const url = el('dlUrlIn').value.trim();
+  if (!/^https?:\/\/\S+$/i.test(url)) return toast("Masukkan URL lengkap diawali https://");
+  el('dlErrBox').classList.add('hidden'); el('dlResBox').classList.add('hidden');
+  el('dlProgressContainer').classList.remove('hidden'); dlProgress(0, 'Menghubungi server...'); dlSetBusy(true);
+  let id;
+  try {
+    const r = await fetch(DL_API + '/api/dl/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url, format: dlFmt }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) return dlShowError(d.error || 'Server menolak permintaan.');
+    id = d.id;
+  } catch { return dlShowError('Server downloader tidak terjangkau. Pastikan server berjalan (npm start) dan buka lewat http://localhost:3000.'); }
+  dlWatch(id);
+}
+function dlWatch(id) {
+  if (dlES) dlES.close();
+  dlES = new EventSource(`${DL_API}/api/dl/progress/${encodeURIComponent(id)}`);
+  dlES.onmessage = ev => {
+    const j = JSON.parse(ev.data); dlProgress(j.percent, j.text);
+    if (j.status === 'done') {
+      dlES.close(); dlES = null; dlSetBusy(false);
+      el('dlProgressContainer').classList.add('hidden');
+      el('dlMediaTitle').textContent = j.title || j.filename;
+      el('dlLinkBtn').onclick = () => dlSave(id, j.filename);
+      el('dlResBox').classList.remove('hidden');
+      dlSave(id, j.filename); log('Unduh media', dlFmt.toUpperCase()); toast('Unduhan dimulai ✓');
+    } else if (j.status === 'error') {
+      dlES.close(); dlES = null; dlShowError(j.error || 'Gagal mengunduh.');
+    }
+  };
+  dlES.onerror = () => { if (!dlBusy) return; if (dlES) dlES.close(); dlES = null; dlShowError('Koneksi ke server terputus.'); };
+}
+el('dlUrlIn').addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
+
+/* ================= AI HUB (UPDATED TO LATEST GEMINI API v1beta) ================= */
+const aiHistory = [];
+function updateAiKeyUI() {
+  el('aiApiKey').value = state.aiApiKey || ''; 
+  if(el('aiModel')) el('aiModel').value = state.aiModel || 'gemini-2.5-flash';
+  el('aiKeyStatus').innerHTML = state.aiApiKey ? '<span class="badge b-green">✓ API Key terpasang</span>' : '<span class="badge b-red">API Key belum diatur</span>';
+}
+
+function saveAiKey() {
+  const k = el('aiApiKey').value.trim(); if (!k) return toast("Masukkan API key.");
+  state.aiApiKey = k; 
+  state.aiModel = el('aiModel').value.trim() || 'gemini-2.5-flash'; 
+  notifyStateChange(); updateAiKeyUI(); toast("API key & Model disimpan.");
+}
+
+function aiMsg(who, text) {
+  const d = document.createElement('div'); d.className = 'chat-msg ' + who; d.textContent = text;
+  el('aiChatBox').appendChild(d); el('aiChatBox').scrollTop = el('aiChatBox').scrollHeight;
+}
+
+function quickPrompt(t) { el('aiInput').value = t; sendAiMessage(); }
+
+async function sendAiMessage() {
+  const text = el('aiInput').value.trim(), key = state.aiApiKey, model = (el('aiModel').value || state.aiModel || 'gemini-2.5-flash').trim();
+  if (!text) return toast("Ketik pesan dulu.");
+  if (!key) return toast("Simpan Gemini API key dulu.");
+  
+  aiMsg('user', text); el('aiInput').value = ''; aiHistory.push({ role: 'user', parts: [{ text }] });
+  const btn = el('aiSendBtn'), old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="loader"></span>';
+  
+  try {
+    /* Menggunakan Endpoint Gemini REST API v1beta Terbaru */
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`, {
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: 'Kamu asisten NAMEKTUKAM Creator Dashboard: ramah, ringkas, ahli editing video (terutama Alight Motion), skrip YouTube/Shorts/TikTok, ide konten, dan SEO. Jawab dalam bahasa pengguna.' }] },
+        contents: aiHistory.slice(-20)
+      })
+    });
+    
+    const d = await r.json();
+    const reply = d.candidates?.[0]?.content?.parts?.map(p => p.text).join('');
+    if (r.ok && reply) { 
+      aiHistory.push({ role: 'model', parts: [{ text: reply }] }); 
+      aiMsg('ai', reply); 
+    } else { 
+      aiHistory.pop(); 
+      aiMsg('ai', '❌ Error AI: ' + (d.error?.message || 'Gagal memproses respons. Pastikan API key valid.')); 
+    }
+  } catch (e) { 
+    aiHistory.pop(); 
+    aiMsg('ai', '❌ Koneksi gagal: ' + e.message); 
+  } finally { 
+    btn.disabled = false; 
+    btn.innerHTML = old; 
+  }
+}
+el('aiInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendAiMessage(); });
+
+/* ================= ACCOUNT ================= */
+el('pwForm').addEventListener('submit', async e => {
+  e.preventDefault(); if (!guard()) return;
+  const u = curUser(), o = el('pwOld').value, n = el('pwNew').value;
+  if (u.hash !== await sha(u.salt + o)) return toast("Password lama salah.");
+  if (n.length < 8) return toast("Password baru minimal 8 karakter.");
+  u.salt = newSalt(); u.hash = await sha(u.salt + n); notifyStateChange(); e.target.reset(); log("Password diganti"); toast("Password diperbarui.");
+});
+
+function exportMyData() { const { hash, salt, ...safe } = curUser(); download(`data-${me}.json`, JSON.stringify(safe, null, 2)); }
+
+function deleteMyAccount() {
+  if (!confirm("Hapus akun dan semua datanya? Tidak bisa dibatalkan.")) return;
+  if (prompt(`Ketik username kamu (${me}) untuk konfirmasi:`) !== me) return toast("Dibatalkan.");
+  state.users = state.users.filter(u => u.username !== me); log("Akun dihapus"); notifyStateChange(); logout(true); toast("Akun dihapus.");
+}
+
+/* ================= ADMIN (FULL REAL-TIME CONTROL) ================= */
+function renderAdminLock() {
+  const first = !state.ownerPin;
+  el('adminLockTitle').textContent = first ? 'Buat PIN Owner' : 'Akses Owner';
+  el('adminLockDesc').textContent = first ? 'Belum ada PIN. Buat PIN (min. 6 karakter) — tidak ditulis di source code.' : 'Masukkan PIN owner untuk membuka panel.';
+  el('adminPin2').classList.toggle('hidden', !first);
+  el('adminPinBtn').textContent = first ? 'Simpan PIN & Buka' : 'Buka Panel →';
+  el('adminLock').classList.toggle('hidden', adminOpen); el('adminPanel').classList.toggle('hidden', !adminOpen);
+  if (adminOpen) renderAdmin();
+}
+
+el('adminPinForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (Date.now() < pinLockUntil) return toast(`PIN terkunci! Tunggu ${Math.ceil((pinLockUntil - Date.now())/1000)} detik.`);
+
+  const p = el('adminPin').value;
+  if (!state.ownerPin) {
+    if (p.length < 6) return toast("PIN minimal 6 karakter.");
+    if (p !== el('adminPin2').value) return toast("Konfirmasi PIN tidak sama.");
+    const salt = newSalt(); state.ownerPin = { salt, hash: await sha(salt + p) }; notifyStateChange();
+  } else if (state.ownerPin.hash !== await sha(state.ownerPin.salt + p)) {
+    pinAttempts++;
+    if (pinAttempts >= 5) {
+      pinLockUntil = Date.now() + 30000;
+      pinAttempts = 0;
+      return toast("5x Salah! Akses PIN dikunci 30 detik.");
+    }
+    return toast("PIN salah.");
+  }
+  pinAttempts = 0;
+  adminOpen = true; e.target.reset(); toast("Akses owner dibuka."); renderAdminLock();
+});
+
+function lockAdmin(silent) { adminOpen = false; if (!silent) toast("Panel dikunci."); renderAdminLock(); }
+
+async function changeOwnerPin() {
+  const o = prompt("PIN lama:"); if (o === null) return;
+  if (state.ownerPin.hash !== await sha(state.ownerPin.salt + o)) return toast("PIN lama salah.");
+  const n = prompt("PIN baru (min. 6):"); if (!n || n.length < 6) return toast("PIN tidak valid.");
+  const salt = newSalt(); state.ownerPin = { salt, hash: await sha(salt + n) }; notifyStateChange(); toast("PIN diganti.");
+}
+
+function renderAdmin() {
+  if (!adminOpen) return;
+  el('adUsers').textContent = state.users.length; el('adLogs').textContent = state.logs.length; el('adQuota').textContent = state.quota;
+  el('adServer').textContent = state.maintenance ? 'OFFLINE' : 'ONLINE'; el('adServer').style.color = state.maintenance ? 'var(--red)' : 'var(--green)';
+  el('btnMaint').textContent = state.maintenance ? '⚡ Matikan Maintenance' : '⚙️ Aktifkan Maintenance';
+  
+  el('userTable').innerHTML = state.users.length ? state.users.map(u => `<tr>
+    <td><b>${esc(u.username)}</b></td><td>${esc(u.amEmail || '-')}</td><td>${new Date(u.createdAt).toLocaleDateString('id-ID')}</td>
+    <td>${(u.projects?.length || 0) + (u.presets?.length || 0)}</td>
+    <td>${isBanned(u.username) ? '<span class="badge b-red">BANNED</span>' : '<span class="badge b-green">AKTIF</span>'}</td>
+    <td><button class="btn btn-danger btn-sm" data-del="${esc(u.username)}">Hapus</button></td></tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:center;color:var(--text-mute)">Belum ada user.</td></tr>`;
+    
+  const q = el('logSearch').value.trim().toLowerCase();
+  const logs = state.logs.filter(l => !q || (l.username + l.status).toLowerCase().includes(q)).slice(0, 100);
+  el('logTable').innerHTML = logs.length ? logs.map(l => `<tr><td><b>${esc(l.username)}</b></td><td>${esc(l.email)}</td><td>${esc(l.time)}</td><td><span class="badge b-green">${esc(l.status)}</span></td></tr>`).join('')
+    : `<tr><td colspan="4" style="text-align:center;color:var(--text-mute)">Tidak ada log.</td></tr>`;
+}
+
+el('userTable').addEventListener('click', e => {
+  const n = e.target.dataset?.del; if (!n || !confirm(`Hapus user ${n} beserta datanya?`)) return;
+  state.users = state.users.filter(u => u.username !== n); state.bannedUsers = state.bannedUsers.filter(b => b.toLowerCase() !== n.toLowerCase()); notifyStateChange(); renderAdmin(); toast(`User ${n} dihapus.`);
+});
+
+el('logSearch').addEventListener('input', renderAdmin);
+
+function toggleMaint() { state.maintenance = !state.maintenance; notifyStateChange(); renderAdmin(); toast(state.maintenance ? "Maintenance AKTIF." : "Server ONLINE."); }
+function clearLogs() { if (!confirm("Hapus semua log?")) return; state.logs = []; notifyStateChange(); renderAdmin(); toast("Log dibersihkan."); }
+
+el('quotaForm').addEventListener('submit', e => {
+  e.preventDefault(); const v = +el('quotaIn').value;
+  if (!Number.isInteger(v) || v < 1 || v > 5000) return toast("Isi angka 1–5000.");
+  state.quota = v; notifyStateChange(); renderAdmin(); e.target.reset(); toast(`Batas item = ${v}.`);
+});
+
+el('banForm').addEventListener('submit', e => {
+  e.preventDefault(); const u = findUser(el('banIn').value.trim());
+  if (!u) return toast("User tidak ditemukan.");
+  if (isBanned(u.username)) return toast("User sudah di-ban.");
+  state.bannedUsers.push(u.username); notifyStateChange(); renderAdmin(); toast(`${u.username} di-BAN.`);
+});
+
+function unbanUser() {
+  const n = el('banIn').value.trim().toLowerCase(), b = state.bannedUsers.length;
+  state.bannedUsers = state.bannedUsers.filter(x => x.toLowerCase() !== n); notifyStateChange(); renderAdmin();
+  toast(b === state.bannedUsers.length ? "User tidak sedang di-ban." : "User di-UNBAN.");
+}
+
+el('bcForm').addEventListener('submit', e => {
+  e.preventDefault(); const m = el('bcIn').value.trim(); if (!m) return;
+  state.broadcast = m; state.broadcastId++; notifyStateChange(); el('bcIn').value = ''; renderBanner(); toast("Broadcast terkirim.");
+});
+
+function clearBroadcast() { state.broadcast = ""; notifyStateChange(); renderBanner(); toast("Broadcast dihapus."); }
+
+function exportLogsCSV() {
+  const q = c => `"${String(c).replace(/"/g, '""').replace(/^([=+\-@])/, "'$1")}"`;
+  download('log-aktivitas.csv', 'username,email,waktu,aktivitas\n' + state.logs.map(l => [l.username, l.email, l.time, l.status].map(q).join(',')).join('\n'), 'text/csv');
+}
+
+function backupAll() { download(`namektukam-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ ...state, aiApiKey: "" }, null, 2)); }
+
+el('restoreFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.users) || !Array.isArray(d.logs)) throw 0;
+    if (!confirm("Restore akan MENIMPA semua data saat ini. Lanjut?")) return;
+    state = { ...DEF, ...d }; notifyStateChange(); renderAll(); renderAdmin(); toast("Restore berhasil.");
+  } catch { toast("File backup tidak valid."); }
+  e.target.value = '';
+});
+
+/* Sinkron antar tab browser */
+window.addEventListener('storage', e => {
+  if (e.key !== KEY) return; state = load();
+  if (me && !curUser()) return logout(true);
+  if (me && isBanned(me)) { toast("Akun kamu di-BAN oleh Owner."); return logout(true); }
+  if (me) renderAll();
+  if (adminOpen) renderAdmin();
+});
+
+/* ================= AM GENERATOR & ACTIVATION API ================= */
+const API_BASE   = "https://am.dapjisync.my.id";
+const BYPASS_KEY = "amfree_key";
+
+const emailInput  = el("emailInput");
+const magicInput  = el("magicInput");
+const sendBtn     = el("sendBtn");
+const activateBtn = el("activateBtn");
+const btnText     = el("btnText");
+const msgBox      = el("msgBox");
+
+let cachedEmail = "";
+
+function showMsg(box, text, type = "error") {
+  if (!box) return;
+  const icon = type === "success"
+    ? '<i class="fas fa-circle-check"></i>'
+    : '<i class="fas fa-circle-exclamation"></i>';
+  box.innerHTML = icon + " <span>" + esc(text) + "</span>";
+  box.className = "msg-box show " + type;
+}
+
+function hideMsg(box) {
+  if (!box) return;
+  box.className = "msg-box";
+  box.innerHTML = "";
+}
+
+function parseApiError(data) {
+  if (!data) return "Terjadi kesalahan tidak diketahui.";
+  if (typeof data.error === "object" && data.error !== null) {
+    return data.error.message || "Gagal memproses permintaan.";
+  }
+  if (typeof data.error === "string") return data.error;
+  if (data.message) return data.message;
+  return "Gagal memproses permintaan.";
+}
+
+// Step 1: Kirim Magic Link
+if (sendBtn) {
+  sendBtn.addEventListener("click", async () => {
+    const email = emailInput ? emailInput.value.trim() : "";
+    if (!email || !email.includes("@")) {
+      showMsg(msgBox, "Masukkan alamat email yang valid.", "error");
+      if (emailInput) emailInput.focus();
+      return;
+    }
+
+    const oldHtml = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<div class="loader"></div>';
+    sendBtn.disabled = true;
+    if (activateBtn) activateBtn.disabled = true;
+    cachedEmail = "";
+    hideMsg(msgBox);
+
+    try {
+      const res  = await fetch(`${API_BASE}/api/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Bypass-Key": BYPASS_KEY },
+        body: JSON.stringify({ gmail: email })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        cachedEmail = email;
+        if (curUser()) { curUser().amEmail = email; notifyStateChange(); }
+        showMsg(msgBox, "Magic Link terkirim! Cek inbox email → salin URL-nya → tempel di bawah.", "success");
+        if (magicInput) magicInput.focus();
+        sendBtn.classList.add("sent");
+        sendBtn.innerHTML = '<i class="fas fa-check"></i> <span>Terkirim</span>';
+        if (activateBtn) activateBtn.disabled = false;
+        setTimeout(() => {
+          sendBtn.innerHTML = oldHtml;
+          sendBtn.classList.remove("sent");
+          sendBtn.disabled = false;
+        }, 3000);
+      } else {
+        showMsg(msgBox, parseApiError(data) || "Gagal mengirim Magic Link. Coba lagi.", "error");
+        sendBtn.innerHTML = oldHtml;
+        sendBtn.disabled = false;
+        if (activateBtn) activateBtn.disabled = false;
+      }
+    } catch (err) {
+      showMsg(msgBox, "Gagal terhubung ke server aktivasi: " + err.message, "error");
+      sendBtn.innerHTML = oldHtml;
+      sendBtn.disabled = false;
+      if (activateBtn) activateBtn.disabled = false;
+    }
+  });
+}
+
+// Step 2: Verifikasi & Aktifkan
+if (activateBtn) {
+  activateBtn.addEventListener("click", async () => {
+    const magicUrl = magicInput ? magicInput.value.trim() : "";
+    const email    = emailInput ? emailInput.value.trim() : cachedEmail;
+
+    if (!magicUrl) {
+      showMsg(msgBox, "Masukkan URL Magic Link yang kamu terima di email.", "error");
+      if (magicInput) magicInput.focus();
+      return;
+    }
+
+    if (!magicUrl.startsWith("http://") && !magicUrl.startsWith("https://")) {
+      showMsg(msgBox, "Format Magic Link tidak valid. Harus diawali http:// atau https://", "error");
+      return;
+    }
+
+    const oldText = btnText ? btnText.innerHTML : "";
+    if (btnText) btnText.innerHTML = '<div class="loader"></div> Memproses Aktivasi...';
+    activateBtn.disabled = true;
+    if (sendBtn) sendBtn.disabled = true;
+    hideMsg(msgBox);
+
+    try {
+      const res  = await fetch(`${API_BASE}/api/activate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Bypass-Key": BYPASS_KEY },
+        body: JSON.stringify({ magicUrl, gmail: email })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showMsg(msgBox, "🎉 Berhasil! Akun Alight Motion Premium kamu sudah aktif.", "success");
+        if (magicInput) magicInput.value = "";
+        if (curUser()) {
+          curUser().amEmail = email;
+          log("Aktivasi AM Sukses", email);
+          notifyStateChange();
+        }
+      } else {
+        showMsg(msgBox, parseApiError(data) || "Gagal mengaktifkan. Pastikan Magic Link belum kedaluwarsa.", "error");
+      }
+    } catch (err) {
+      showMsg(msgBox, "Gagal terhubung ke server aktivasi: " + err.message, "error");
+    } finally {
+      if (btnText) btnText.innerHTML = oldText;
+      activateBtn.disabled = false;
+      if (sendBtn) sendBtn.disabled = false;
+    }
+  });
+}
+
+/* BULK ACCOUNT GENERATOR */
+async function doBulk() {
+  const countEl = el("bulkCount");
+  const count   = countEl ? parseInt(countEl.value, 10) : 1;
+  const bulkMsg = el("bulkMsgBox");
+  const result  = el("bulkResult");
+  const listEl  = el("bulkList");
+  const btn     = el("bulkBtn");
+  const btnText = el("bulkBtnText");
+
+  if (isNaN(count) || count < 1 || count > 10) {
+    showMsg(bulkMsg, "Jumlah akun harus antara 1 sampai 10.", "error");
+    return;
+  }
+
+  hideMsg(bulkMsg);
+  if (result) result.style.display = "none";
+  if (listEl) listEl.innerHTML = "";
+
+  const oldHtml = btnText ? btnText.innerHTML : "";
+  if (btnText) btnText.innerHTML = '<div class="loader"></div> Memproses ' + count + ' akun...';
+  if (btn) btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${API_BASE}/api/bulk`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Bypass-Key": BYPASS_KEY },
+      body: JSON.stringify({ count })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success && Array.isArray(data.results)) {
+      const items = data.results;
+      const okCount = items.filter(i => i.success).length;
+
+      el("bulkResultLabel").textContent = `Hasil (${okCount}/${items.length} Berhasil):`;
+
+      let html = "";
+      items.forEach((item, idx) => {
+        const num   = idx + 1;
+        const em    = item.gmail || "-";
+        const link  = item.magicUrl || "";
+        const isOk  = item.success;
+        const err   = item.error ? parseApiError({ error: item.error }) : "";
+
+        html += `
+          <div class="bulk-item">
+            <span class="bulk-item-num">#${num}</span>
+            <div class="bulk-item-info">
+              <div class="bulk-item-email">${esc(em)}</div>
+              ${link ? `<a class="bulk-item-link" href="${safeUrl(link)}" target="_blank" rel="noopener noreferrer">Buka Magic Link &rarr;</a>` : ""}
+              ${err ? `<div style="font-size:11px;color:var(--red)">${esc(err)}</div>` : ""}
+            </div>
+            <span class="bulk-item-status ${isOk ? "ok" : "fail"}">
+              ${isOk ? '<i class="fas fa-check-circle"></i> Sukses' : '<i class="fas fa-times-circle"></i> Gagal'}
+            </span>
+          </div>
+        `;
+      });
+
+      if (listEl) listEl.innerHTML = html;
+      if (result) result.style.display = "block";
+      showMsg(bulkMsg, `Berhasil memproses bulk account (${okCount}/${items.length} sukses).`, "success");
+      log("Bulk Account Generator", `${okCount} Akun`);
+      notifyStateChange();
+    } else {
+      showMsg(bulkMsg, parseApiError(data) || "Gagal generate bulk account.", "error");
+    }
+  } catch (err) {
+    showMsg(bulkMsg, "Gagal terhubung ke server: " + err.message, "error");
+  } finally {
+    if (btnText) btnText.innerHTML = oldHtml;
+    if (btn) btn.disabled = false;
+  }
+}
+
+function copyBulk() {
+  const items = document.querySelectorAll("#bulkList .bulk-item");
+  if (!items.length) return toast("Tidak ada data untuk disalin.");
+  const lines = [];
+  items.forEach(it => {
+    const em   = it.querySelector(".bulk-item-email")?.textContent || "";
+    const link = it.querySelector(".bulk-item-link")?.href || "";
+    if (em) lines.push(em + (link ? " | " + link : ""));
+  });
+  copyText(lines.join("\n"));
+}
+
+function downloadBulk() {
+  const items = document.querySelectorAll("#bulkList .bulk-item");
+  if (!items.length) return toast("Tidak ada data untuk diunduh.");
+  const lines = [];
+  items.forEach(it => {
+    const em   = it.querySelector(".bulk-item-email")?.textContent || "";
+    const link = it.querySelector(".bulk-item-link")?.href || "";
+    if (em) lines.push(em + (link ? " | " + link : ""));
+  });
+  download(`bulk-alightmotion-${Date.now()}.txt`, lines.join("\n"), "text/plain");
+}
+</script>
+</body>
+</html>
