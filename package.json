@@ -1,0 +1,16 @@
+{
+  "name": "namektukam-dashboard",
+  "version": "4.1.0",
+  "private": true,
+  "description": "NAMEKTUKAM Creator Dashboard + downloader backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
